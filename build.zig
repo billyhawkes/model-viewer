@@ -13,6 +13,7 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
     });
     const dep_zmath = b.dependency("zalgebra", .{});
+    const dep_zgltf = b.dependency("zgltf", .{});
 
     const shdc_step = try sokol.shdc.createSourceFile(b, .{
         .shdc_dep = dep_shdc,
@@ -33,6 +34,7 @@ pub fn build(b: *std.Build) !void {
             .{ .name = "sokol", .module = dep_sokol.module("sokol") },
             .{ .name = cimgui_conf.module_name, .module = dep_cimgui.module(cimgui_conf.module_name) },
             .{ .name = "math", .module = dep_zmath.module("zalgebra") },
+            .{ .name = "gltf", .module = dep_zgltf.module("zgltf") },
         },
     });
     const exe = b.addExecutable(.{ .name = "triangle", .root_module = root_module });

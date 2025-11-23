@@ -16,6 +16,10 @@
             .url = "git+https://github.com/kooparse/zalgebra#e84c8a378b516ddaf2dfc221e524e0c1d15f4108",
             .hash = "zalgebra-0.0.0-aaiVSuZ0AQDD8Z5Q-8a4kLcz_2srt4cQbwT0QRjKjnDi",
         },
+        .zgltf = .{
+            .url = "git+https://github.com/kooparse/zgltf#ec52d477db346af99d4cdced4e35e67e1670023f",
+            .hash = "zgltf-0.1.0-sX6QAt0SAgDzMQCCG-N181hVbx8JnwFYZ3luQigQpVBM",
+        },
     },
     .paths = .{
         "build.zig",

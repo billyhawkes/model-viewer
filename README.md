@@ -5,8 +5,8 @@ Application for viewing gLTF models. Created to learn zig, graphics, and more.
 - [x] Setup 
     - [x] Triangle
     - [x] Imgui
-- [ ] Editing Model 
+- [x] Editing Model 
     - [x] Transform
     - [x] Rotation
-    - [ ] Scale
-- [ ] Render gLTF file
+    - [x] Scale
+- [x] Render gLTF shape

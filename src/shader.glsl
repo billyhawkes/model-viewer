@@ -4,7 +4,6 @@
 @vs vs
 
 in vec3 position;
-in vec3 _color;
 
 out vec3 color;
 
@@ -14,7 +13,7 @@ layout(binding=0) uniform vs_params {
 
 void main() {
 	gl_Position = mvp * vec4(position, 1.0);
-	color = _color;
+	color = vec3(0.5, 1.0, 0.5);
 }
 
 @end
