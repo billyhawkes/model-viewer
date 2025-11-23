@@ -117,9 +117,9 @@ export fn event(ev: [*c]const sapp.Event) void {
 }
 
 pub fn parseGltf() !void {
-    const buffer = try std.fs.cwd().readFileAllocOptions(allocator, "./cube.gltf", 512_000, null, std.mem.Alignment.@"4", null);
+    const buffer = try std.fs.cwd().readFileAllocOptions(allocator, "./mesh.gltf", 512_000, null, std.mem.Alignment.@"4", null);
     defer allocator.free(buffer);
-    const bin = try std.fs.cwd().readFileAllocOptions(allocator, "./cube.bin", 5_000_000, null, std.mem.Alignment.@"4", null);
+    const bin = try std.fs.cwd().readFileAllocOptions(allocator, "./mesh.bin", 5_000_000, null, std.mem.Alignment.@"4", null);
     defer allocator.free(bin);
 
     var gltf = Gltf.init(allocator);
