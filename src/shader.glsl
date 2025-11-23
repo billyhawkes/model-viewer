@@ -1,0 +1,33 @@
+@header const Mat4 = @import("math").Mat4
+@ctype mat4 Mat4
+
+@vs vs
+
+in vec3 position;
+in vec3 _color;
+
+out vec3 color;
+
+layout(binding=0) uniform vs_params {
+	mat4 mvp;
+};
+
+void main() {
+	gl_Position = mvp * vec4(position, 1.0);
+	color = _color;
+}
+
+@end
+
+@fs fs
+
+in vec3 color;
+out vec4 out_color;
+
+void main() {
+	out_color = vec4(color, 1.0);
+}
+
+@end
+
+@program shader vs fs

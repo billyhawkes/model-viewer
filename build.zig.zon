@@ -1,0 +1,25 @@
+.{
+    .name = .model_viewer,
+    .version = "0.0.0",
+    .fingerprint = 0x20bb88ca62b32499,
+    .minimum_zig_version = "0.15.1",
+    .dependencies = .{
+        .sokol = .{
+            .url = "git+https://github.com/floooh/sokol-zig.git#1c217971533e3aa634ecbfbe13ff776e05701e0a",
+            .hash = "sokol-0.1.0-pb1HK3TYLgCx8lOxdLVWIVDcAzacxO8YDfyw2Er-_2nN",
+        },
+        .cimgui = .{
+            .url = "git+https://github.com/floooh/dcimgui.git#d5fb4e3d27b79062dc5981db3631dadc4f204654",
+            .hash = "cimgui-0.1.0-44Clkd6YlAAYULKHDwsDX9EPmka-VAVEjUl-o6ve307E",
+        },
+        .zalgebra = .{
+            .url = "git+https://github.com/kooparse/zalgebra#e84c8a378b516ddaf2dfc221e524e0c1d15f4108",
+            .hash = "zalgebra-0.0.0-aaiVSuZ0AQDD8Z5Q-8a4kLcz_2srt4cQbwT0QRjKjnDi",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
