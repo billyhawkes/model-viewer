@@ -15,11 +15,16 @@ const Mat4 = math.Mat4;
 
 const allocator = std.heap.page_allocator;
 
+const Vertex = extern struct {
+    position: [3]f32,
+    normal: [3]f32,
+};
+
 const Model = struct {
     transform: Vec3 = Vec3.zero(),
     rotation: Vec3 = Vec3.zero(),
     scale: Vec3 = Vec3.new(1.0, 1.0, 1.0),
-    vertices: std.ArrayList(f32) = .empty,
+    vertices: std.ArrayList(Vertex) = .empty,
     indices: std.ArrayList(u16) = .empty,
 };
 
@@ -30,6 +35,7 @@ var state = struct {
     show_first_window: bool = true,
     show_second_window: bool = true,
     model: Model = .{},
+    light_position: Vec3 = Vec3.new(2.0, 0.0, 0.0),
 }{};
 
 export fn init() void {
@@ -52,13 +58,8 @@ export fn init() void {
 
     var layout: sg.VertexLayoutState = .{};
     layout.attrs[shader.ATTR_shader_position].format = sg.VertexFormat.FLOAT3;
-    state.pipeline = sg.makePipeline(.{
-        .shader = sg.makeShader(shader.shaderShaderDesc(sg.queryBackend())),
-        .layout = layout,
-        .index_type = .UINT16,
-        // Wireframe
-        // .primitive_type = .LINE_STRIP
-    });
+    layout.attrs[shader.ATTR_shader_normal].format = sg.VertexFormat.FLOAT3;
+    state.pipeline = sg.makePipeline(.{ .shader = sg.makeShader(shader.shaderShaderDesc(sg.queryBackend())), .layout = layout, .index_type = .UINT16, .depth = .{ .compare = .LESS_EQUAL, .write_enabled = true } });
 }
 
 export fn frame() void {
@@ -76,6 +77,7 @@ export fn frame() void {
         _ = ig.igSliderFloat3("Transform", &state.model.transform.data[0], -10, 10);
         _ = ig.igSliderFloat3("Rotation", &state.model.rotation.data[0], -360, 360);
         _ = ig.igSliderFloat3("Scale", &state.model.scale.data[0], 0, 10);
+        _ = ig.igSliderFloat3("Light", &state.light_position.data[0], -10, 10);
     }
 
     ig.igEnd();
@@ -85,13 +87,19 @@ export fn frame() void {
     const view = math.lookAt(Vec3.new(0.0, 0.0, -2.0), Vec3.zero(), Vec3.new(0.0, 1.0, 0.0));
     var model = Mat4.identity();
     // Scale -> Translation -> Rotation (right to left)
-    model = model.translate(state.model.transform);
+    model = model.scale(state.model.scale);
     model = Mat4.rotate(model, state.model.rotation.x(), Vec3.new(1.0, 0.0, 0.0));
     model = Mat4.rotate(model, state.model.rotation.y(), Vec3.new(0.0, 1.0, 0.0));
     model = Mat4.rotate(model, state.model.rotation.z(), Vec3.new(0.0, 0.0, 1.0));
-    model = model.scale(state.model.scale);
+    model = model.translate(state.model.transform);
 
     const mvp = Mat4.mul(projection, view.mul(model));
+
+    const vertexParams = shader.VsParams{
+        .mvp = mvp,
+        .light_position = state.light_position.data,
+        .model = model,
+    };
 
     sg.beginPass(.{
         .action = state.pass_action,
@@ -99,7 +107,7 @@ export fn frame() void {
     });
     sg.applyPipeline(state.pipeline);
     sg.applyBindings(state.bindings);
-    sg.applyUniforms(0, sg.asRange(&mvp));
+    sg.applyUniforms(shader.UB_vs_params, sg.asRange(&vertexParams));
     sg.draw(0, @intCast(state.model.indices.items.len), 1);
     simgui.render();
     sg.endPass();
@@ -138,8 +146,21 @@ pub fn parseGltf() !void {
                 switch (attribute) {
                     .position => |index| {
                         const vertexAccessor = gltf.data.accessors[index];
-                        const vertex_slice = try gltf.getDataFromBufferView(f32, allocator, vertexAccessor, bin);
-                        try state.model.vertices.appendSlice(allocator, vertex_slice);
+                        var it = vertexAccessor.iterator(f32, &gltf, bin);
+                        while (it.next()) |v| {
+                            try state.model.vertices.append(allocator, .{
+                                .position = .{ v[0], v[1], v[2] },
+                                .normal = .{ 0.0, 0.0, 0.0 },
+                            });
+                        }
+                    },
+                    .normal => |index| {
+                        const normalAccessor = gltf.data.accessors[index];
+                        var it = normalAccessor.iterator(f32, &gltf, bin);
+                        var i: u32 = 0;
+                        while (it.next()) |n| : (i += 1) {
+                            state.model.vertices.items[i].normal = .{ n[0], n[1], n[2] };
+                        }
                     },
                     else => {},
                 }
