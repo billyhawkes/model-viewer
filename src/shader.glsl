@@ -38,11 +38,21 @@ out vec4 out_color;
 
 void main() {
 	vec3 light_color = vec3(1.0, 1.0, 1.0);
+
+	// Ambient
 	vec3 ambient = vec3(0.2, 0.2, 0.2);
+
+	// Diffuse
 	vec3 light_direction =  normalize(_light_position - fragment_position);
 	vec3 diffuse = max(dot(light_direction, normalize(_normal)), 0.0) * light_color;
 
-	vec3 lighting = ambient + diffuse;
+	// Specular
+	vec3 view_direction = normalize(vec3(0.0, 0.0, -2.0) - fragment_position);
+	vec3 reflect_direction = reflect(-light_direction, _normal);
+	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
+	vec3 specular = 0.5 * spec * light_color;
+
+	vec3 lighting = ambient + diffuse + specular;
 
 	out_color = vec4(_color * lighting, 1.0);
 }

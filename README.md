@@ -10,7 +10,7 @@ Application for viewing gLTF models. Created to learn zig, graphics, and more.
     - [x] Rotation
     - [x] Scale
 - [x] Render gLTF shape
-- [ ] Lighting (Phong)
+- [x] Lighting (Phong)
 - [ ] Textures
 - [ ] CLI (vw mesh.glb)
 
