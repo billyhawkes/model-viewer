@@ -12,7 +12,11 @@ Application for viewing gLTF models. Created to learn zig, graphics, and more.
 - [x] Render gLTF shape
 - [x] Lighting (Phong)
 - [ ] Textures
-- [ ] CLI (vw mesh.glb)
+- [ ] Improved camera controls (pan)
+- [ ] CLI (view mesh.glb)
 
-## Notes
+## Abstractions (reusable in game engine and this)
+- [ ] Custom math library (remove zmath dep)
+- [ ] Renderer
+
 
